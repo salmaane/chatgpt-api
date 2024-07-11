@@ -15,8 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatGPTService {
 
-    final private RestTemplate restTemplate;
-
     final private ChatGPTDAO dao;
 
     @Value("${openai.chatgpt.url}")
@@ -26,7 +24,7 @@ public class ChatGPTService {
     private String model;
 
     public String chat(String openaiToken, String prompt) {
-        setOpenAiToken(openaiToken);
+        RestTemplate restTemplate = getRestTemplateWithTokenSet(openaiToken);
 
         ChatCompletionRequest request = new ChatCompletionRequest(prompt, model);
 
@@ -56,11 +54,13 @@ public class ChatGPTService {
         return dao.findAllByOpenaiToken(openAiToken);
     }
 
-    private void setOpenAiToken(String openaiToken) {
+    private RestTemplate getRestTemplateWithTokenSet(String openaiToken) {
+        RestTemplate restTemplate = new RestTemplate();
         restTemplate.getInterceptors().add(((request, body, execution) -> {
             request.getHeaders().add("Authorization", "Bearer " + openaiToken);
             return execution.execute(request,body);
         }));
+        return restTemplate;
     }
 
 }
