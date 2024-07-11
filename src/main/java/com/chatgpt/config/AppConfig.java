@@ -9,17 +9,10 @@ import org.springframework.web.client.RestTemplate;
 public class AppConfig {
 
     @Bean
-    public RestTemplate template() {
-    RestTemplate restTemplate = new RestTemplate();
-
-    restTemplate.getInterceptors().add(((request, body, execution) -> {
-        request.getHeaders().add("Authorization",
-                "Bearer "+"key");
-        return execution.execute(request,body);
-    }));
-
+    public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+
 }
 
 
