@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ChatGPTService {
@@ -36,8 +38,8 @@ public class ChatGPTService {
                     .prompt(prompt)
                     .completion(response.getChoices().get(0).getMessage().getContent())
                     .createdAt(response.getCreated())
-                    .completionTokens(response.getUsage().getCompletionTokens())
-                    .promptTokens(response.getUsage().getPromptTokens())
+                    .completionTokens(response.getUsage().getCompletion_tokens())
+                    .promptTokens(response.getUsage().getPrompt_tokens())
                     .openaiToken(openaiToken)
                     .model(response.getModel())
                     .build();
@@ -48,6 +50,10 @@ public class ChatGPTService {
         }
 
         return null;
+    }
+
+    public List<Conversation> conversations(String openAiToken) {
+        return dao.findAllByOpenaiToken(openAiToken);
     }
 
     private void setOpenAiToken(String openaiToken) {

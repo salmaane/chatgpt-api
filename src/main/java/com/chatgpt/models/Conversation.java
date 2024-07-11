@@ -16,11 +16,12 @@ public class Conversation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-   
     private String openaiToken;
 
+    @Column(columnDefinition = "TEXT")
     private String prompt;
 
+    @Column(columnDefinition = "TEXT")
     private String completion;
 
     private Date createdAt;
