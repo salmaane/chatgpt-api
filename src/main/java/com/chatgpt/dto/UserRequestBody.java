@@ -11,5 +11,7 @@ public class UserRequestBody {
 
     private String openaiToken;
     private String prompt;
+    private String userName;
+
 
 }

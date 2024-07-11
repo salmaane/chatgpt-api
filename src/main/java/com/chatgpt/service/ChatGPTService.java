@@ -1,9 +1,10 @@
 package com.chatgpt.service;
 
-import com.chatgpt.dao.ChatGPTDAO;
+import com.chatgpt.dao.UserDao;
 import com.chatgpt.dto.ChatCompletionRequest;
 import com.chatgpt.dto.ChatCompletionResponse;
 import com.chatgpt.models.Conversation;
+import com.chatgpt.models.Prompt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,15 +16,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatGPTService {
 
-    final private ChatGPTDAO dao;
 
     @Value("${openai.chatgpt.url}")
     private String baseUrl;
 
     @Value("${openai.model}")
     private String model;
+    private final UserDao userDao;
 
-    public String chat(String openaiToken, String prompt) {
+
+    public String chat(String openaiToken, String prompt , String userName) {
         RestTemplate restTemplate = getRestTemplateWithTokenSet(openaiToken);
 
         ChatCompletionRequest request = new ChatCompletionRequest(prompt, model);
@@ -32,26 +34,23 @@ public class ChatGPTService {
 
         if(response != null) {
 
-            Conversation conversation = Conversation.builder()
-                    .prompt(prompt)
-                    .completion(response.getChoices().get(0).getMessage().getContent())
-                    .createdAt(response.getCreated())
-                    .completionTokens(response.getUsage().getCompletion_tokens())
-                    .promptTokens(response.getUsage().getPrompt_tokens())
-                    .openaiToken(openaiToken)
-                    .model(response.getModel())
-                    .build();
-
-            dao.save(conversation);
+           var user =  userDao.findByOpenaiToken(openaiToken);
+           if(user != null) {
+               Prompt prompt1 = Prompt.builder().build();
+              // user.getConversations().add();
+           }
 
             return response.getChoices().get(0).getMessage().getContent();
+
+
         }
 
         return null;
     }
 
     public List<Conversation> conversations(String openAiToken) {
-        return dao.findAllByOpenaiToken(openAiToken);
+        //return dao.findAllByOpenaiToken(openAiToken);
+        return null;
     }
 
     private RestTemplate getRestTemplateWithTokenSet(String openaiToken) {
