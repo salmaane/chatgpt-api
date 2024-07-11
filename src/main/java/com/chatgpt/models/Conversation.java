@@ -1,18 +1,22 @@
 package com.chatgpt.models;
 
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.Date;
 
 @Entity
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Conversation {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String openaiToken;
 
     private String prompt;
@@ -26,7 +30,5 @@ public class Conversation {
     private int completionTokens;
 
     private String model;
-
-
 
 }

@@ -1,7 +1,9 @@
 package com.chatgpt.service;
 
+import com.chatgpt.dao.ChatGPTDAO;
 import com.chatgpt.dto.ChatCompletionRequest;
 import com.chatgpt.dto.ChatCompletionResponse;
+import com.chatgpt.models.Conversation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,8 @@ import org.springframework.web.client.RestTemplate;
 public class ChatGPTService {
 
     final private RestTemplate restTemplate;
+
+    final private ChatGPTDAO dao;
 
     @Value("${openai.chatgpt.url}")
     private String baseUrl;
@@ -28,7 +32,17 @@ public class ChatGPTService {
 
         if(response != null) {
 
-            // Database operations
+            Conversation conversation = Conversation.builder()
+                    .prompt(prompt)
+                    .completion(response.getChoices().get(0).getMessage().getContent())
+                    .createdAt(response.getCreated())
+                    .completionTokens(response.getUsage().getCompletionTokens())
+                    .promptTokens(response.getUsage().getPromptTokens())
+                    .openaiToken(openaiToken)
+                    .model(response.getModel())
+                    .build();
+
+            dao.save(conversation);
 
             return response.getChoices().get(0).getMessage().getContent();
         }

@@ -1,4 +1,8 @@
 package com.chatgpt.dao;
 
-public class ChatGPTDAO {
+import com.chatgpt.models.Conversation;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ChatGPTDAO extends JpaRepository<Conversation, Long> {
+
 }
