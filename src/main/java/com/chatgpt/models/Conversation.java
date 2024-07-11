@@ -3,7 +3,9 @@ package com.chatgpt.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -12,17 +14,20 @@ import java.util.Date;
 @NoArgsConstructor
 public class Conversation {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String openaiToken;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(columnDefinition = "TEXT")
-    private String prompt;
 
-    @Column(columnDefinition = "TEXT")
-    private String completion;
+    @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Prompt> prompts;
+
+
 
     private Date createdAt;
 
