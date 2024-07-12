@@ -27,4 +27,6 @@ public class Prompt {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     private Conversation conversation;
+
+    private Date createdAt;
 }

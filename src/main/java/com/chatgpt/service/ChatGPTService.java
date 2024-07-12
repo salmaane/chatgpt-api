@@ -40,6 +40,7 @@ public class ChatGPTService {
            Prompt prompt = Prompt.builder()
                    .question(promptText)
                    .response(response.getChoices().get(0).getMessage().getContent())
+                   .createdAt(response.getCreated())
                    .build();
 
            Conversation conversation;
