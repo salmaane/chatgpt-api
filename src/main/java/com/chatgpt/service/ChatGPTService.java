@@ -1,5 +1,6 @@
 package com.chatgpt.service;
 
+import com.chatgpt.dao.ConversationDao;
 import com.chatgpt.dao.UserDao;
 import com.chatgpt.dto.ChatCompletionRequest;
 import com.chatgpt.dto.ChatCompletionResponse;
@@ -19,6 +20,7 @@ import java.util.List;
 public class ChatGPTService {
 
     private final UserDao userDao;
+    private final ConversationDao conversationDao;
 
     @Value("${openai.chatgpt.url}")
     private String baseUrl;
@@ -26,7 +28,7 @@ public class ChatGPTService {
     @Value("${openai.model}")
     private String model;
 
-    public String chat(String openaiToken, String promptText , String username) {
+    public String chat(String openaiToken, String promptText , String username, Long conversationId) {
 
         RestTemplate restTemplate = getRestTemplateWithTokenSet(openaiToken);
 
@@ -40,32 +42,52 @@ public class ChatGPTService {
                    .response(response.getChoices().get(0).getMessage().getContent())
                    .build();
 
-           Conversation conversation = Conversation.builder()
-                   .prompt(prompt)
-                   .createdAt(response.getCreated())
-                   .promptTokens(response.getUsage().getPrompt_tokens())
-                   .completionTokens(response.getUsage().getCompletion_tokens())
-                   .model(model)
-                   .build();
+           Conversation conversation;
 
-           var user =  userDao.findByOpenaiToken(openaiToken);
+           if(conversationId != null) {
+               conversation = conversationDao.findById(conversationId).get();
+               prompt.setConversation(conversation);
+               conversation.getPrompts().add(prompt);
 
-           if(user != null) {
-               user.getConversations().add(conversation);
-           } else {
-               List<Conversation> conversations = new ArrayList<>();
-               conversations.add(conversation);
-
-               user = User.builder()
-                       .username(username)
-                       .conversations(conversations)
-                       .openaiToken(openaiToken)
-                       .build();
+               conversationDao.save(conversation);
 
            }
+           else {
+               conversation = Conversation.builder()
+                       .createdAt(response.getCreated())
+                       .promptTokens(response.getUsage().getPrompt_tokens())
+                       .completionTokens(response.getUsage().getCompletion_tokens())
+                       .model(model)
+                       .build();
 
-            conversation.setUser(user);
-            userDao.save(user);
+               prompt.setConversation(conversation);
+
+               List<Prompt> prompts = new ArrayList<>();
+               prompts.add(prompt);
+
+               conversation.setPrompts(prompts);
+
+               var user = userDao.findByOpenaiToken(openaiToken);
+
+               if(user != null) {
+                   user.getConversations().add(conversation);
+
+               } else {
+                   List<Conversation> conversations = new ArrayList<>();
+                   conversations.add(conversation);
+
+                   user = User.builder()
+                           .username(username)
+                           .conversations(conversations)
+                           .openaiToken(openaiToken)
+                           .build();
+               }
+
+               conversation.setUser(user);
+               userDao.save(user);
+           }
+
+
             return response.getChoices().get(0).getMessage().getContent();
         }
 

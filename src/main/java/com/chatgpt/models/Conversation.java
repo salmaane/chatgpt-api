@@ -23,8 +23,8 @@ public class Conversation {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Prompt prompt;
+    @OneToMany(mappedBy = "conversation", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Prompt> prompts;
 
     private Date createdAt;
 

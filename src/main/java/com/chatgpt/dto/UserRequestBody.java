@@ -12,6 +12,7 @@ public class UserRequestBody {
     private String openaiToken;
     private String prompt;
     private String username;
+    private Long conversationId;
 
 
 }

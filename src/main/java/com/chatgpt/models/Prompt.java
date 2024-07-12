@@ -1,5 +1,6 @@
 package com.chatgpt.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,4 +23,8 @@ public class Prompt {
     private String question;
 
     private String response;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Conversation conversation;
 }

@@ -19,7 +19,9 @@ public class ChatGPTController {
 
     @PostMapping("/prompts")
     public ResponseEntity<String> chat(@RequestBody UserRequestBody request) {
-        String response = service.chat(request.getOpenaiToken(), request.getPrompt(), request.getUsername());
+        String response = service.chat(
+                request.getOpenaiToken(), request.getPrompt(), request.getUsername(), request.getConversationId()
+        );
         if(response != null) {
             return ResponseEntity.ok(response);
         }
