@@ -2,7 +2,8 @@ package com.chatgpt.controller;
 
 import com.chatgpt.dto.UserRequestBody;
 import com.chatgpt.models.Conversation;
-import com.chatgpt.service.ChatGPTService;
+import com.chatgpt.service.ChatGptService;
+import com.chatgpt.service.ChatGptServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +16,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatGPTController {
 
-    final private ChatGPTService service;
+    final private ChatGptService service;
 
     @PostMapping("/prompts")
     public ResponseEntity<String> chat(@RequestBody UserRequestBody request) {
+        // service call
         String response = service.chat(
                 request.getOpenaiToken(), request.getPrompt(), request.getUsername(), request.getConversationId()
         );

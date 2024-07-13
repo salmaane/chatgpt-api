@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ChatGPTService {
+public class ChatGptServiceImpl implements ChatGptService {
 
     private final UserDao userDao;
     private final ConversationDao conversationDao;
