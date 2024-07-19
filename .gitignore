@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Not Need  yet ###
+src/main/java/com/chatgpt/config/
