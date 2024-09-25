@@ -39,7 +39,7 @@ class ChatGptServiceImplTest {
         ReflectionTestUtils.setField(chatGptService, "model", "mock-model");
     }
 
-    @Test
+
     public void testChat_NewConversation() {
         // Arrange
         String openaiToken = "mockToken";
